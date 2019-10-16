@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   TouchableOpacity,
+  AsyncStorage,
   FlatList,
   StyleSheet,
   Text,
+  CheckBox,
+  View,
+  ScrollView,
+  Alert
 } from 'react-native';
+
 import Constants from 'expo-constants';
 
 const DATA = [
@@ -43,22 +49,23 @@ const DATA = [
   },
 ];
 
-function Item({ id, title, selected, onSelect }) {
-  return (
-    <TouchableOpacity
-      onPress={() => onSelect(id)}
-      style={[
-        styles.item,
-        { backgroundColor: selected ? '#6e3b6e' : '#f9c2ff' },
-      ]}
-    >
-      <Text style={styles.title}>{title}</Text>
-    </TouchableOpacity>
-  );
-}
-
-export default function App() {
+export default function Assuntos({ navigation }) {
   const [selected, setSelected] = React.useState(new Map());
+  var sValor = '';
+
+  function Item({ id, title, selected, onSelect }) {
+    return (
+      <View style={styles.viewDis}>
+        <CheckBox style={{ fontSize: 17 }} onChange={() => Dis(title)} />
+        <Text style={styles.viewText}>{title}</Text>
+      </View>
+    );
+  }
+
+  async function Dis(dis) {
+    sValor = sValor + dis + "|";
+    await AsyncStorage.setItem('mat', sValor);
+  }
 
   const onSelect = React.useCallback(
     id => {
@@ -70,21 +77,46 @@ export default function App() {
     [selected],
   );
 
+  async function back() {
+    navigation.navigate('Index');
+  }
+
+  async function showAlert() {
+    Alert.alert(
+      'Disciplinas Foram Salvas',
+      'Suas Disciplinas foram salvas e agora iremos trabalhar em disponibilizar suas aulas e exercicios.',
+      [
+        { text: "OK", onPress: () => back() },
+      ],
+      { cancelable: false },
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={DATA}
-        renderItem={({ item }) => (
-          <Item
-            id={item.id}
-            title={item.title}
-            selected={!!selected.get(item.id)}
-            onSelect={onSelect}
-          />
-        )}
-        keyExtractor={item => item.id}
-        extraData={selected}
-      />
+      <View style={{ height: 38, backgroundColor: '#B0C4DE', marginBottom: 15 }} >
+        <Text onPress={back} style={{ fontSize: 14, padding: 10, backgroundColor: '#778899' }}>Voltar</Text>
+      </View>
+      <ScrollView>
+        <FlatList
+          data={DATA}
+          renderItem={({ item }) => (
+            <Item
+              id={item.id}
+              title={item.title}
+              selected={!!selected.get(item.id)}
+              onSelect={onSelect}
+            />
+          )}
+          keyExtractor={item => item.id}
+          extraData={selected}
+        />
+      </ScrollView>
+      <View style={styles.form}>
+        <TouchableOpacity onPress={showAlert} style={styles.button}>
+          <Text style={styles.buttonText}>Selecionar</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -93,6 +125,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: Constants.statusBarHeight,
+    backgroundColor: '#FFF'
   },
   item: {
     backgroundColor: '#f9c2ff',
@@ -103,4 +136,33 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
   },
+  viewDis: {
+    marginTop: 20,
+    backgroundColor: '#F8F8FF',
+    paddingLeft: 12,
+    flexDirection: 'row',
+    alignContent: 'space-between',
+  },
+  viewText: {
+    fontSize: 16,
+    padding: 10,
+    color: '#000',
+  },
+  button: {
+    height: 48,
+    backgroundColor: '#32CD32',
+    justifyContent: "center",
+    alignItems: 'center',
+    borderRadius: 1,
+    padding: 10
+  },
+
+  buttonText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    fontSize: 16
+  },
+  form: {
+    alignSelf: 'stretch',
+  }
 });

@@ -4,7 +4,8 @@ import {
     Text,
     View,
     AsyncStorage,
-    TouchableOpacity
+    TouchableOpacity,
+    Alert
 } from 'react-native';
 
 import CalendarPicker from 'react-native-calendar-picker';
@@ -80,7 +81,16 @@ export default class Eventos extends Component {
                 />
 
                 <View style={styles.form}>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity onPress={() => {
+                        Alert.alert(
+                            'Calendario de atividades Salvo',
+                            'Estamos trabalhando para vincular seu periodo de atividades com suas disciplinas escolhidas.',
+                            [
+                                { text: "OK", onPress: () => navigate('Index') },
+                            ],
+                            { cancelable: false },
+                        );
+                    }} style={styles.button}>
                         <Text style={styles.buttonText}>Estou Pronto :)</Text>
                     </TouchableOpacity>
 

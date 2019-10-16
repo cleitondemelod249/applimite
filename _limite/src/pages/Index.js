@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, Image, AsyncStorage, ScrollView, TouchableOpacity } from 'react-native';
+import { Button, View, StyleSheet, Text, Image, AsyncStorage, ScrollView, TouchableOpacity } from 'react-native';
 
 export default function Index( { navigation } ) {
     const [nameSession, setName] = useState('');
@@ -43,11 +43,15 @@ export default function Index( { navigation } ) {
         navigation.navigate('Assuntos');
     }
 
+    async function pageVideos() {
+        navigation.navigate('Videos');
+    }
+
     return (
         <View style={ styles.container }>
+            <Image style={styles.image} source={ {uri: imageSession} } />
             <Text style={styles.header}>{ nameSession }</Text>
             <Text> { mailSession } </Text>
-            <Image style={styles.image} source={ {uri: imageSession, body: 'Your Body goes here'} } />
 
             <ScrollView style={styles.form}>
 
@@ -59,7 +63,7 @@ export default function Index( { navigation } ) {
                     <Text style={styles.buttonText}>Meus Assuntos</Text>
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity onPress={pageVideos} style={styles.button}>
                     <Text style={styles.buttonText}>Ver videos</Text>
                 </TouchableOpacity>
 
@@ -84,12 +88,13 @@ const styles = StyleSheet.create({
         marginTop: 100
     },
     header: {
+        marginTop: 8,
         fontSize: 25
     },
     image: {
-        marginTop: 15,
-        width: 150,
-        height: 150,
+        marginTop: 10,
+        width: 100,
+        height: 100,
         borderColor: "rgba(0,0,0,0.2)",
         borderWidth: 3,
         borderRadius: 150
